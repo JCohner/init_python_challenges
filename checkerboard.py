@@ -9,11 +9,34 @@ import pandas as pd
 
 
 class Game():
-    
+    def check_df(self, col, row):
+        if (self.active_player == self.players[0]):
+            marker = 1
+        elif (self.active_player == self.players[1]):
+            marker = -1
+        
+        if(self.df.iloc[row, col] == 0):
+            self.df.iloc[row, col] = marker
+            self.active_player = self.players[(self.turn + 1) % 2]
+            print(self.active_player)
+        elif (row < -7):
+            print("you cant place there")
+        else:
+            self.check_df(col, row - 1)
+
+    def onclick(self, event):
+            #print(self.active_player)
+            col = int(math.floor(event.xdata))
+            print(self.df.iloc[-1, col])
+            self.check_df(col, -1)
+            print(self.df)
 
     def __init__(self):
         self.num_rows = 7 + 1
         self.num_columns = 6 +1
+        self.df = pd.DataFrame(np.zeros((self.num_rows,self.num_columns))).astype('int32')
+        print(self.df)
+        
 
         fig = plt.figure()
         x_axis = np.arange(self.num_rows)
@@ -26,37 +49,19 @@ class Game():
             line = np.zeros(len(x_axis)) + y
             plt.plot(np.arange(len(x_axis)), line, 'k')
         cid = fig.canvas.mpl_connect('button_press_event', self.onclick)
-        plt.show()
+        
 
         self.players = ['p1', 'p2']
         self.turn = 0
-        self.active_player = self.players[turn]
+        self.active_player = self.players[self.turn]
         print(self.active_player)
+        plt.show()
 
-        self.df = pd.DataFrame(np.zeros((self.num_rows,self.num_columns))).astype('int32')
-        print(self.df)
+        
                 
-        def onclick(self, event):
-            #print(self.active_player)
-            col = int(math.floor(event.xdata))
-            print(self.df.iloc[-1, col])
-            check_df(col, -1, active_player)
-            print(self.df)
+        
     
-        def check_df(self, col, row):
-            if (self.active_player == self.players[0]):
-                marker = 1
-            elif (self.active_player == self.players[1]):
-                marker = -1
-            
-            if(self.df.iloc[row, col] == 0):
-                self.df.iloc[row, col] = marker
-                self.active_player = self.players[(turn + 1) % 2]
-                print(self.active_player)
-            elif (row < -7):
-                print("you cant place there")
-            else:
-                check_df(col, row - 1, self.active_player)
+        
 
 
 
