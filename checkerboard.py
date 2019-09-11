@@ -11,13 +11,19 @@ def onclick(event):
     #print(event.xdata)
     col = int(math.floor(event.xdata))
     print(df.iloc[-1, col])
-    if (df.iloc[-1, col] == 0):
-        df.iloc[-1, col] = 1
+    check_df(col, -1)
     print(df)
+def check_df(col, row):
+    if(df.iloc[row, col] == 0):
+        df.iloc[row, col] = 1
+    elif (row < -6):
+        print("you cant place there")
+    else:
+        check_df(col, row - 1)
 x_axis = np.arange(7 + 1)
 y_axis = np.arange(6 + 1)
 
-df = pd.DataFrame(np.zeros((7,6))).astype('int32')
+df = pd.DataFrame(np.zeros((8,7))).astype('int32')
 
 for x in range(len(x_axis)):
     line = np.zeros(len(y_axis)) + x
