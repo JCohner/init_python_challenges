@@ -17,16 +17,30 @@ class Game():
         
         if(self.df.iloc[row, col] == 0):
             self.df.iloc[row, col] = marker
-            self.active_player = self.players[(self.turn + 1) % 2]
+            self.turn = (self.turn + 1) % 2
+            self.active_player = self.players[self.turn]
             print(self.active_player)
+            self.make_circle(col, row, marker)
         elif (row < -7):
             print("you cant place there")
         else:
             self.check_df(col, row - 1)
 
+    def make_circle(self, col, row, marker):
+        pos = (col + 0.5 ,abs(row) - 0.5)
+        print(pos)
+        if (marker == 1):
+            color = 'r'
+        elif (marker == -1):
+            color = 'b'
+        circle = plt.Circle(pos, 0.5, color = color)
+        self.ax.add_artist(circle)
+        plt.show()
+
     def onclick(self, event):
             #print(self.active_player)
             col = int(math.floor(event.xdata))
+            
             print(self.df.iloc[-1, col])
             self.check_df(col, -1)
             print(self.df)
@@ -38,7 +52,7 @@ class Game():
         print(self.df)
         
 
-        fig = plt.figure()
+        fig, self.ax = plt.subplots()
         x_axis = np.arange(self.num_rows)
         y_axis = np.arange(self.num_columns)
         for x in range(len(x_axis)):
@@ -56,13 +70,6 @@ class Game():
         self.active_player = self.players[self.turn]
         print(self.active_player)
         plt.show()
-
-        
-                
-        
-    
-        
-
 
 
 g = Game()
