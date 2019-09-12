@@ -116,32 +116,49 @@ class Game():
                 if (seq >= 4):
                     cprint("player 2 wins!", 'blue')      
         #diag_win()
-        self.diag_win_check(col, row, [])
+        total_seq = self.diag_win_check(col, row, [])
+        print(total_seq)
 
     def diag_win_check(self, col, row, checked):
         num_diag = 0
-        #row = abs(row) - 1
         print((row, col))
-        diag_neighbors = []
-        print(self.df)
+        pos_slope_neighbors = []
+        neg_slope_neighbors = []
         for x in range(-1,2,2):
             for y in range(-1,2,2):
                 if ((row + x) < 0) and ((col + y) >= 0):
                     print("checking coord " + str((row+x,col+y)))
                     print(self.df.iloc[row + x, col + y])
                     if (self.df.iloc[row + x, col + y] == 1):
-                        diag_neighbors.append((row+x, col+y))
-        num_diag = len(diag_neighbors)
-
-            checked.append((row,col))
+                        print("got a hit at")
+                        print(str((row + x, col + y)))
+                        print((x,y))
+                        if ((x * y) < 0): #means they are of the same sign
+                            pos_slope_neighbors.append((row+x, col+y))
+                        elif ((x * y) > 0): #means they are of opposite sign
+                            neg_slope_neighbors.append((row+x, col+y))
+        print("checked is")
+        checked.append((row,col))
         print(checked)
-        recurse_sum = 0
-        for x in range(len(diag_neighbors)):
-            print(x)
-            if (x not in checked):
-                recurse_sum = recurse_sum  + self.diag_win_check(diag_neighbors[x][1], diag_neighbors[x][0], checked)
 
-        return num_diag
+        #pos slope neighbor check
+        recurse_sum = 1
+        #print("positive sloping neighbors are " + str(pos_slope_neighbors))
+        for x in range(len(pos_slope_neighbors)):
+            #print(pos_slope_neighbors[x])
+            if (pos_slope_neighbors[x] not in checked):
+                print("Calling recursion!")
+                recurse_sum = recurse_sum  + self.diag_win_check(pos_slope_neighbors[x][1], pos_slope_neighbors[x][0], checked)
+       
+        recurse_sum_b = 1
+        for x in range(len(neg_slope_neighbors)):
+            #print(pos_slope_neighbors[x])
+            if (neg_slope_neighbors[x] not in checked):
+                print("Calling recursion!")
+                recurse_sum_b = recurse_sum_b  + self.diag_win_check(neg_slope_neighbors[x][1], neg_slope_neighbors[x][0], checked)
+
+        #print(recurse_sum)
+        return recurse_sum
 
 
 
