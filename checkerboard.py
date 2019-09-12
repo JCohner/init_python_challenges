@@ -116,33 +116,30 @@ class Game():
                 if (seq >= 4):
                     cprint("player 2 wins!", 'blue')      
         #diag_win()
-        self.diag_win_check(col, row, [])
+        self.diag_win_check(col, row)
 
-    def diag_win_check(self, col, row, checked):
-        num_diag = 0
-        #row = abs(row) - 1
+    def diag_win_check(self, col, row):
         print((row, col))
-        diag_neighbors = []
-        print(self.df)
-        for x in range(-1,2,2):
-            for y in range(-1,2,2):
-                if ((row + x) < 0) and ((col + y) >= 0):
-                    print("checking coord " + str((row+x,col+y)))
-                    print(self.df.iloc[row + x, col + y])
-                    if (self.df.iloc[row + x, col + y] == 1):
-                        diag_neighbors.append((row+x, col+y))
-        num_diag = len(diag_neighbors)
+        front_diags = []
+        back_diags = []
+        for x in range(-2,4,1):
+            front_diags.append(np.diagonal(self.df, x))
+        front_diags = pd.Series(front_diags)
+        print(front_diags)
+        flipped = np.flip(self.df.to_numpy(), 0)
+        for x in range(-2,4,1):
+            back_diags.append(np.diagonal(flipped, x))
+        back_diags = pd.Series(back_diags)
 
-            checked.append((row,col))
-        print(checked)
-        recurse_sum = 0
-        for x in range(len(diag_neighbors)):
+        for x in front_diags:
             print(x)
-            if (x not in checked):
-                recurse_sum = recurse_sum  + self.diag_win_check(diag_neighbors[x][1], diag_neighbors[x][0], checked)
+            win_diag_1 = pd.Series((x == 1))
+            win_diag_1_counts = win_diag_1.value_counts()
+            if (len(win_diag_1_counts) > 1):
+                num_pieces = win_diag_1_counts.loc[True]
+                print("player 1 has " + str(num_pieces) + " pieces in this diag")
 
-        return num_diag
-
+        
 
 
     def onclick(self, event):
