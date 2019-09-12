@@ -26,7 +26,7 @@ class Game():
             self.check_df(col, row - 1)
 
     def make_circle(self, col, row, marker):
-        self.win_check(col, row)
+        
         pos = (col + 0.5 ,abs(row) - 0.5)
         #print(pos)
         if (marker == 1):
@@ -35,7 +35,9 @@ class Game():
             color = 'b'
         circle = plt.Circle(pos, 0.4, color = color)
         self.ax.add_artist(circle)
+        self.win_check(col, row)
         plt.show()
+
    
     def win_check(self, col, row):
         #col_win()
@@ -138,15 +140,15 @@ class Game():
             elif (self.active_player == self.players[1]):
                 cprint("player 1 wins!", 'red')
                 self.game_state = 1
-    #     self.win_print()
+        self.win_print()
 
-    # def win_print(self):
-    #     if(self.game_state == 1):
-    #         plt.text(3.5, 3, "Player 1 Wins!")
-    #         plt.show()
-    #     elif (self.game_state == -1):
-    #         plt.text(3.5, 3, "Player 2 Wins!")
-    #         plt.show()
+    def win_print(self):
+        if(self.game_state == 1):
+            plt.text(.75, 3, "Player 1 Wins!", fontsize = 40, color = 'r')
+            plt.show()
+        elif (self.game_state == -1):
+            plt.text(.75, 3, "Player 2 Wins!", fontsize = 40, color = 'b')
+            plt.show()
 
     def pos_diag_win_check(self, col, row, checked, player):
         print((row, col))
