@@ -59,6 +59,7 @@ class Game():
                         seq = 0
                     x = x + 1
                 if (seq >= 4):
+                    self.game_state = 1
                     cprint("player 1 wins!", 'red')
 
         if (len(win_col_2_counts.index) > 1):
@@ -75,6 +76,7 @@ class Game():
                         seq = 0
                     x = x + 1
                 if (seq >= 4):
+                    self.game_state = -1
                     cprint("player 2 wins!", 'blue')      
 
         #row_win()
@@ -98,6 +100,7 @@ class Game():
                         seq = 0
                     x = x + 1
                 if (seq >= 4):
+                    self.game_state = 1
                     cprint("player 1 wins!", 'red')
 
         if (len(win_row_2_counts.index) > 1):
@@ -114,29 +117,52 @@ class Game():
                         seq = 0
                     x = x + 1
                 if (seq >= 4):
+                    self.game_state = -1
                     cprint("player 2 wins!", 'blue')      
         #diag_win()
-        total_seq = self.diag_win_check(col, row, [])
-        print(total_seq)
+        if (self.active_player == self.players[0]):
+            marker = -1 #player 2 is actually going, i must be updating active player at worong point TODO: fix this
+        elif (self.active_player == self.players[1]):
+            marker = 1
 
-    def diag_win_check(self, col, row, checked):
-        num_diag = 0
+        total_seq_1 = self.pos_diag_win_check(col, row, [], marker)
+        print("positive slope total " + str(total_seq_1))
+
+        total_seq_2 = self.neg_diag_win_check(col, row, [], marker)
+        print("neg slope total " + str(total_seq_2))
+
+        if (total_seq_1 >= 4 or total_seq_2 >= 4):
+            if (self.active_player == self.players[0]):
+                cprint("player 2 wins!", 'blue')
+                self.game_state = -1
+            elif (self.active_player == self.players[1]):
+                cprint("player 1 wins!", 'red')
+                self.game_state = 1
+    #     self.win_print()
+
+    # def win_print(self):
+    #     if(self.game_state == 1):
+    #         plt.text(3.5, 3, "Player 1 Wins!")
+    #         plt.show()
+    #     elif (self.game_state == -1):
+    #         plt.text(3.5, 3, "Player 2 Wins!")
+    #         plt.show()
+
+    def pos_diag_win_check(self, col, row, checked, player):
         print((row, col))
         pos_slope_neighbors = []
-        neg_slope_neighbors = []
+        
         for x in range(-1,2,2):
             for y in range(-1,2,2):
-                if ((row + x) < 0) and ((col + y) >= 0):
-                    print("checking coord " + str((row+x,col+y)))
-                    print(self.df.iloc[row + x, col + y])
-                    if (self.df.iloc[row + x, col + y] == 1):
+                if ((row - x) < 0) and ((col + y) < 7 and (x * y > 0)): #in bounds and positive slope vals
+                    print("checking coord " + str((row-x,col+y)))
+                    print(self.df.iloc[row - x, col + y])
+                    if (self.df.iloc[row - x, col + y] == player):
                         print("got a hit at")
-                        print(str((row + x, col + y)))
+                        print(str((row - x, col + y)))
                         print((x,y))
-                        if ((x * y) < 0): #means they are of the same sign
-                            pos_slope_neighbors.append((row+x, col+y))
-                        elif ((x * y) > 0): #means they are of opposite sign
-                            neg_slope_neighbors.append((row+x, col+y))
+                        pos_slope_neighbors.append((row-x, col+y))
+                        
         print("checked is")
         checked.append((row,col))
         print(checked)
@@ -148,19 +174,39 @@ class Game():
             #print(pos_slope_neighbors[x])
             if (pos_slope_neighbors[x] not in checked):
                 print("Calling recursion!")
-                recurse_sum = recurse_sum  + self.diag_win_check(pos_slope_neighbors[x][1], pos_slope_neighbors[x][0], checked)
-       
-        recurse_sum_b = 1
-        for x in range(len(neg_slope_neighbors)):
-            #print(pos_slope_neighbors[x])
-            if (neg_slope_neighbors[x] not in checked):
-                print("Calling recursion!")
-                recurse_sum_b = recurse_sum_b  + self.diag_win_check(neg_slope_neighbors[x][1], neg_slope_neighbors[x][0], checked)
-
-        #print(recurse_sum)
+                recurse_sum = recurse_sum  + self.pos_diag_win_check(pos_slope_neighbors[x][1], pos_slope_neighbors[x][0], checked, player)
+        print("pos slope recurse sum " + str(recurse_sum))
         return recurse_sum
 
+    def neg_diag_win_check(self, col, row, checked, player):
+        print((row, col))
+        neg_slope_neighbors = []
+        
+        for x in range(-1,2,2):
+            for y in range(-1,2,2):
+                if ((row - x) < 0) and ((col + y) < 7 and (x * y < 0)): #in bounds and negitive slope vals
+                    print("checking coord " + str((row-x,col+y)))
+                    print(self.df.iloc[row - x, col + y])
+                    if (self.df.iloc[row - x, col + y] == player):
+                        print("got a hit at")
+                        print(str((row - x, col + y)))
+                        print((x,y))
+                        neg_slope_neighbors.append((row-x, col+y))
+                        
+        print("checked is")
+        checked.append((row,col))
+        print(checked)
 
+        #neg slope neighbor check
+        recurse_sum = 1
+        #print("negitive sloping neighbors are " + str(neg_slope_neighbors))
+        for x in range(len(neg_slope_neighbors)):
+            #print(neg_slope_neighbors[x])
+            if (neg_slope_neighbors[x] not in checked):
+                print("Calling recursion!")
+                recurse_sum = recurse_sum  + self.neg_diag_win_check(neg_slope_neighbors[x][1], neg_slope_neighbors[x][0], checked, player)
+        print("neg slope recurse sum " + str(recurse_sum))
+        return recurse_sum
 
     def onclick(self, event):
             #print(self.active_player)
@@ -174,6 +220,7 @@ class Game():
         self.num_rows = 7 + 1
         self.num_columns = 6 +1
         self.df = pd.DataFrame(np.zeros((self.num_rows,self.num_columns))).astype('int32')
+        self.game_state = 0
         print(self.df)
         
 
