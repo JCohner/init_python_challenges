@@ -116,6 +116,34 @@ class Game():
                 if (seq >= 4):
                     cprint("player 2 wins!", 'blue')      
         #diag_win()
+        self.diag_win_check(col, row, [])
+
+    def diag_win_check(self, col, row, checked):
+        num_diag = 0
+        #row = abs(row) - 1
+        print((row, col))
+        diag_neighbors = []
+        print(self.df)
+        for x in range(-1,2,2):
+            for y in range(-1,2,2):
+                if ((row + x) < 0) and ((col + y) >= 0):
+                    print("checking coord " + str((row+x,col+y)))
+                    print(self.df.iloc[row + x, col + y])
+                    if (self.df.iloc[row + x, col + y] == 1):
+                        diag_neighbors.append((row+x, col+y))
+        num_diag = len(diag_neighbors)
+
+            checked.append((row,col))
+        print(checked)
+        recurse_sum = 0
+        for x in range(len(diag_neighbors)):
+            print(x)
+            if (x not in checked):
+                recurse_sum = recurse_sum  + self.diag_win_check(diag_neighbors[x][1], diag_neighbors[x][0], checked)
+
+        return num_diag
+
+
 
     def onclick(self, event):
             #print(self.active_player)
