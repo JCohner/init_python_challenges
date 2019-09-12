@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import pandas as pd
+from termcolor import cprint
+
 
 #ax = fig.add_subplot(111)
 class Game():
@@ -37,20 +39,82 @@ class Game():
    
     def win_check(self, col, row):
         #col_win()
-        win_col_1= (self.df.iloc[:, col] == 1).value_counts()
-        win_col_2 = (self.df.iloc[:, col] == -1).value_counts()
-        if (len(win_col_1.index) > 1):
-            print("player 1 has " + str(win_col_1.loc[True]) + " pieces in this col")
-        if (len(win_col_2.index) > 1):
-            print("player 2 has " + str(win_col_2.loc[True]) + " pieces in this col")      
+        win_col_1 = (self.df.iloc[:, col] == 1)
+        win_col_2 = (self.df.iloc[:, col] == -1)
+
+        win_col_1_counts = win_col_1.value_counts()
+        win_col_2_counts = win_col_2.value_counts()
+
+        if (len(win_col_1_counts.index) > 1):
+            num_pieces = win_col_1_counts.loc[True]
+            print("player 1 has " + str(num_pieces) + " pieces in this col")
+            if (num_pieces >= 4):
+                print(win_col_1)
+                seq = 0
+                x = 0
+                while x < len(win_col_1) and seq < 4 :
+                    if (win_col_1[x] == True):
+                        seq = seq + 1
+                    else:
+                        seq = 0
+                    x = x + 1
+                if (seq >= 4):
+                    cprint("player 1 wins!", 'red')
+
+        if (len(win_col_2_counts.index) > 1):
+            num_pieces = win_col_2_counts.loc[True]
+            print("player 2 has " + str(num_pieces) + " pieces in this col")
+            if (num_pieces >= 4):
+                print(win_col_2)
+                seq = 0
+                x = 0
+                while x < len(win_col_2) and seq < 4 :
+                    if (win_col_2[x] == True):
+                        seq = seq + 1
+                    else:
+                        seq = 0
+                    x = x + 1
+                if (seq >= 4):
+                    cprint("player 2 wins!", 'blue')      
 
         #row_win()
-        win_row_1= (self.df.iloc[row, :] == 1).value_counts()
-        win_row_2 = (self.df.iloc[row, :] == -1).value_counts()
-        if (len(win_row_1.index) > 1):
-            print("player 1 has " + str(win_row_1.loc[True]) + " pieces in this row")
-        if (len(win_row_2.index) > 1):
-            print("player 2 has " + str(win_row_2.loc[True]) + " pieces in this row")      
+        win_row_1 = (self.df.iloc[row, :] == 1)
+        win_row_2 = (self.df.iloc[row, :] == -1)
+
+        win_row_1_counts = win_row_1.value_counts()
+        win_row_2_counts = win_row_2.value_counts()
+
+        if (len(win_row_1_counts.index) > 1):
+            num_pieces = win_row_1_counts.loc[True]
+            print("player 1 has " + str(num_pieces) + " pieces in this row")
+            if (num_pieces >= 4):
+                print(win_row_1)
+                seq = 0
+                x = 0
+                while x < len(win_row_1) and seq < 4 :
+                    if (win_row_1[x] == True):
+                        seq = seq + 1
+                    else:
+                        seq = 0
+                    x = x + 1
+                if (seq >= 4):
+                    cprint("player 1 wins!", 'red')
+
+        if (len(win_row_2_counts.index) > 1):
+            num_pieces = win_row_2_counts.loc[True]
+            print("player 2 has " + str(num_pieces) + " pieces in this row")
+            if (num_pieces >= 4):
+                print(win_row_2)
+                seq = 0
+                x = 0
+                while x < len(win_row_2) and seq < 4 :
+                    if (win_row_2[x] == True):
+                        seq = seq + 1
+                    else:
+                        seq = 0
+                    x = x + 1
+                if (seq >= 4):
+                    cprint("player 2 wins!", 'blue')      
         #diag_win()
 
     def onclick(self, event):
