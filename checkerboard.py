@@ -4,10 +4,7 @@ import numpy as np
 import math
 import pandas as pd
 
-
 #ax = fig.add_subplot(111)
-
-
 class Game():
     def check_df(self, col, row):
         if (self.active_player == self.players[0]):
@@ -27,15 +24,34 @@ class Game():
             self.check_df(col, row - 1)
 
     def make_circle(self, col, row, marker):
+        self.win_check(col, row)
         pos = (col + 0.5 ,abs(row) - 0.5)
-        print(pos)
+        #print(pos)
         if (marker == 1):
             color = 'r'
         elif (marker == -1):
             color = 'b'
-        circle = plt.Circle(pos, 0.5, color = color)
+        circle = plt.Circle(pos, 0.4, color = color)
         self.ax.add_artist(circle)
         plt.show()
+   
+    def win_check(self, col, row):
+        #col_win()
+        win_col_1= (self.df.iloc[:, col] == 1).value_counts()
+        win_col_2 = (self.df.iloc[:, col] == -1).value_counts()
+        if (len(win_col_1.index) > 1):
+            print("player 1 has " + str(win_col_1.loc[True]) + " pieces in this col")
+        if (len(win_col_2.index) > 1):
+            print("player 2 has " + str(win_col_2.loc[True]) + " pieces in this col")      
+
+        #row_win()
+        win_row_1= (self.df.iloc[row, :] == 1).value_counts()
+        win_row_2 = (self.df.iloc[row, :] == -1).value_counts()
+        if (len(win_row_1.index) > 1):
+            print("player 1 has " + str(win_row_1.loc[True]) + " pieces in this row")
+        if (len(win_row_2.index) > 1):
+            print("player 2 has " + str(win_row_2.loc[True]) + " pieces in this row")      
+        #diag_win()
 
     def onclick(self, event):
             #print(self.active_player)
